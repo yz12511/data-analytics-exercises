@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: stg_regions
+    description: Cleaned region records loaded from bronze.regions.
+    columns:
+      - name: region_id
+        tests:
+          - not_null
+          - unique
+      - name: region_name
+        tests:
+          - not_null
+      - name: country
+        tests:
+          - not_null
+      - name: continent
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Americas', 'Europe', 'Asia']
+
+  - name: stg_clients
+    description: Cleaned client records loaded from bronze.clients.
+    columns:
+      - name: client_id
+        tests:
+          - not_null
+          - unique
+      - name: client_name
+        tests:
+          - not_null
+      - name: client_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Corporate', 'Individual', 'SME']
+      - name: region_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_regions')
+              field: region_id
+      - name: email
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: Cleaned product records loaded from bronze.products.
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+      - name: product_name
+        tests:
+          - not_null
+      - name: category
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Electronics', 'Furniture', 'Stationery']
+      - name: subcategory
+        tests:
+          - not_null
+      - name: list_price
+        tests:
+          - not_null
+
+  - name: stg_orders
+    description: Cleaned and typed order records loaded from bronze.orders.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: order_date
+        tests:
+          - not_null
+      - name: client_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_clients')
+              field: client_id
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+      - name: quantity
+        tests:
+          - not_null
+      - name: unit_price
+        tests:
+          - not_null
+      - name: discount_pct
+        tests:
+          - not_null

@@ -13,6 +13,10 @@
 {{ config(materialized='view', schema='silver', tags=['staging']) }}
 
 SELECT
-    -- your columns here
+    TRIM(client_id) AS client_id,
+    TRIM(client_name) AS client_name,
+    TRIM(client_type) AS client_type,
+    TRIM(region_id) AS region_id,
+    LOWER(TRIM(email)) AS email
 FROM bronze.clients
-WHERE -- your filter here
+WHERE NULLIF(TRIM(client_id), '') IS NOT NULL

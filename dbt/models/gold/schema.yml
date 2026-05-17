@@ -1,0 +1,143 @@
+version: 2
+
+models:
+  - name: dim_region
+    description: Gold region dimension.
+    columns:
+      - name: region_key
+        tests:
+          - not_null
+          - unique
+      - name: region_id
+        tests:
+          - not_null
+          - unique
+      - name: continent
+        tests:
+          - accepted_values:
+              values: ['Americas', 'Europe', 'Asia']
+
+  - name: dim_client
+    description: Gold client dimension.
+    columns:
+      - name: client_key
+        tests:
+          - not_null
+          - unique
+      - name: client_id
+        tests:
+          - not_null
+          - unique
+      - name: client_type
+        tests:
+          - accepted_values:
+              values: ['Corporate', 'Individual', 'SME']
+      - name: region_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_region')
+              field: region_key
+
+  - name: dim_product
+    description: Gold product dimension.
+    columns:
+      - name: product_key
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+      - name: category
+        tests:
+          - accepted_values:
+              values: ['Electronics', 'Furniture', 'Stationery']
+      - name: list_price
+        tests:
+          - not_null
+
+  - name: dim_date
+    description: Gold date dimension generated from order dates.
+    columns:
+      - name: date_key
+        tests:
+          - not_null
+          - unique
+      - name: full_date
+        tests:
+          - not_null
+          - unique
+      - name: month
+        tests:
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+              quote: false
+
+  - name: fact_sales
+    description: Gold sales fact table at one row per order line.
+    columns:
+      - name: sale_key
+        tests:
+          - not_null
+          - unique
+      - name: date_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+      - name: client_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_client')
+              field: client_key
+      - name: product_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: product_key
+      - name: region_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_region')
+              field: region_key
+      - name: quantity
+        tests:
+          - not_null
+      - name: total_amount
+        tests:
+          - not_null
+
+  - name: mart_monthly_sales
+    description: Monthly sales mart for portfolio dashboarding and business analysis.
+    columns:
+      - name: month_start
+        tests:
+          - not_null
+          - unique
+      - name: year
+        tests:
+          - not_null
+      - name: month
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+              quote: false
+      - name: gmv
+        tests:
+          - not_null
+      - name: order_count
+        tests:
+          - not_null
+      - name: customer_count
+        tests:
+          - not_null
+      - name: average_order_value
+        tests:
+          - not_null

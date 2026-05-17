@@ -16,6 +16,13 @@
 {{ config(materialized='view', schema='silver', tags=['staging']) }}
 
 SELECT
-    -- your columns here
+    TRIM(order_id) AS order_id,
+    NULLIF(TRIM(order_date), '')::DATE AS order_date,
+    TRIM(client_id) AS client_id,
+    TRIM(product_id) AS product_id,
+    NULLIF(TRIM(quantity), '')::INTEGER AS quantity,
+    NULLIF(TRIM(unit_price), '')::NUMERIC AS unit_price,
+    NULLIF(TRIM(discount_pct), '')::NUMERIC AS discount_pct
 FROM bronze.orders
-WHERE -- your filters here
+WHERE NULLIF(TRIM(order_id), '') IS NOT NULL
+  AND NULLIF(TRIM(order_date), '') IS NOT NULL

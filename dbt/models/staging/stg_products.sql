@@ -13,6 +13,10 @@
 {{ config(materialized='view', schema='silver', tags=['staging']) }}
 
 SELECT
-    -- your columns here
+    TRIM(product_id) AS product_id,
+    TRIM(product_name) AS product_name,
+    TRIM(category) AS category,
+    TRIM(subcategory) AS subcategory,
+    NULLIF(TRIM(list_price), '')::NUMERIC AS list_price
 FROM bronze.products
-WHERE -- your filter here
+WHERE NULLIF(TRIM(product_id), '') IS NOT NULL

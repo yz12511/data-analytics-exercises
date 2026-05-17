@@ -9,10 +9,12 @@
 --
 -- Columns to expose: region_id, region_name, country, continent
 
--- TODO: replace the line below with your SELECT statement
 {{ config(materialized='view', schema='silver', tags=['staging']) }}
 
 SELECT
-    -- your columns here
+    TRIM(region_id) AS region_id,
+    TRIM(region_name) AS region_name,
+    TRIM(country) AS country,
+    TRIM(continent) AS continent
 FROM bronze.regions
-WHERE -- your filter here
+WHERE NULLIF(TRIM(region_id), '') IS NOT NULL

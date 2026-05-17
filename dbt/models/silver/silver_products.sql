@@ -10,7 +10,11 @@
 {{ config(materialized='table', schema='silver', tags=['silver']) }}
 
 SELECT
-    -- surrogate key here
-    -- product columns here
-    -- loaded_at here
+    ABS(('x' || MD5(product_id))::BIT(32)::INT) AS product_sk,
+    product_id,
+    product_name,
+    category,
+    subcategory,
+    list_price,
+    CURRENT_TIMESTAMP AS loaded_at
 FROM {{ ref('stg_products') }}

@@ -15,7 +15,10 @@
 {{ config(materialized='table', schema='silver', tags=['silver']) }}
 
 SELECT
-    -- surrogate key here
-    -- natural columns here
-    -- loaded_at here
+    ABS(('x' || MD5(region_id))::BIT(32)::INT) AS region_sk,
+    region_id,
+    region_name,
+    country,
+    continent,
+    CURRENT_TIMESTAMP AS loaded_at
 FROM {{ ref('stg_regions') }}

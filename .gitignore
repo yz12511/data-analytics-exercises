@@ -1,0 +1,22 @@
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# dbt generated artifacts
+dbt/target/
+dbt/logs/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+*.local
+.venv/
+venv/
+dbt/.user.yml
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

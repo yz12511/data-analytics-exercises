@@ -1,0 +1,103 @@
+version: 2
+
+models:
+  - name: silver_regions
+    description: Region dimension base table with deterministic surrogate keys.
+    columns:
+      - name: region_sk
+        tests:
+          - not_null
+          - unique
+      - name: region_id
+        tests:
+          - not_null
+          - unique
+      - name: loaded_at
+        tests:
+          - not_null
+
+  - name: silver_clients
+    description: Client records enriched with region surrogate keys.
+    columns:
+      - name: client_sk
+        tests:
+          - not_null
+          - unique
+      - name: client_id
+        tests:
+          - not_null
+          - unique
+      - name: client_type
+        tests:
+          - accepted_values:
+              values: ['Corporate', 'Individual', 'SME']
+      - name: region_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('silver_regions')
+              field: region_sk
+      - name: loaded_at
+        tests:
+          - not_null
+
+  - name: silver_products
+    description: Product dimension base table with deterministic surrogate keys.
+    columns:
+      - name: product_sk
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+      - name: category
+        tests:
+          - accepted_values:
+              values: ['Electronics', 'Furniture', 'Stationery']
+      - name: list_price
+        tests:
+          - not_null
+      - name: loaded_at
+        tests:
+          - not_null
+
+  - name: silver_orders
+    description: Order facts enriched with client, product, region, and date keys.
+    columns:
+      - name: order_sk
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: date_key
+        tests:
+          - not_null
+      - name: client_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('silver_clients')
+              field: client_sk
+      - name: product_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('silver_products')
+              field: product_sk
+      - name: region_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('silver_regions')
+              field: region_sk
+      - name: total_amount
+        tests:
+          - not_null
+      - name: loaded_at
+        tests:
+          - not_null

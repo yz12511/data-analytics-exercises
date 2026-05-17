@@ -11,6 +11,10 @@
 {{ config(materialized='table', schema='gold', tags=['gold']) }}
 
 SELECT
-    -- product_sk AS product_key
-    -- other columns
+    product_sk AS product_key,
+    product_id,
+    product_name,
+    category,
+    subcategory,
+    list_price
 FROM {{ ref('silver_products') }}

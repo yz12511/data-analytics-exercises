@@ -11,6 +11,9 @@
 {{ config(materialized='table', schema='gold', tags=['gold']) }}
 
 SELECT
-    -- region_sk AS region_key
-    -- remaining columns
+    region_sk AS region_key,
+    region_id,
+    region_name,
+    country,
+    continent
 FROM {{ ref('silver_regions') }}

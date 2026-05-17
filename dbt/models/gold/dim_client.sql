@@ -12,7 +12,10 @@
 {{ config(materialized='table', schema='gold', tags=['gold']) }}
 
 SELECT
-    -- client_sk AS client_key
-    -- other columns
-    -- region_sk AS region_key
+    client_sk AS client_key,
+    client_id,
+    client_name,
+    client_type,
+    email,
+    region_sk AS region_key
 FROM {{ ref('silver_clients') }}

@@ -15,10 +15,14 @@
 {{ config(materialized='table', schema='silver', tags=['silver']) }}
 
 SELECT
-    -- surrogate key here
-    -- client columns here
-    -- r.region_sk here
-    -- loaded_at here
+    ABS(('x' || MD5(c.client_id))::BIT(32)::INT) AS client_sk,
+    c.client_id,
+    c.client_name,
+    c.client_type,
+    c.email,
+    c.region_id,
+    r.region_sk,
+    CURRENT_TIMESTAMP AS loaded_at
 FROM {{ ref('stg_clients') }} c
 LEFT JOIN {{ ref('silver_regions') }} r
-    ON -- join condition here
+    ON c.region_id = r.region_id
